@@ -41,9 +41,9 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
         val mockFileContent = getMockFile(mockFilePath)
 
         if (mockFileContent.isEmpty())
-            Timber.tag(LOG_TAG).i("Mock file not found at: $mockFilePath")
+            showLog("Mock file not found at: $mockFilePath")
         else
-            Timber.tag(LOG_TAG).i("Mock file found at: $mockFilePath")
+            showLog("Mock file found at: $mockFilePath")
 
         val mockItems = parseInput(mockFileContent)
 
@@ -51,7 +51,7 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
 
 
         if (mockItem == null && mockFileContent.isNotEmpty())
-            Timber.tag(LOG_TAG).i("There wasn't any item in mock file that match with the current request configuration")
+            showLog("There wasn't any item in mock file that match with the current request configuration")
 
         // use default failure code mock object have not been found
         var code = DEFAULT_ERROR
@@ -76,6 +76,11 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
             .protocol(Protocol.HTTP_2)
             .message("")
             .build()
+    }
+
+    private fun showLog(message: String) {
+        val text = " \n################################################\n#\n#\t$message\n#\n################################################"
+        Timber.tag(LOG_TAG).i(text)
     }
 
     private fun getMockFilePath(url: HttpUrl?): String {
