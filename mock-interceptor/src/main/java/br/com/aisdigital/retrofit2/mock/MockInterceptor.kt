@@ -29,7 +29,9 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
 
     private val MEDIA_JSON = MediaType.parse("application/json")
 
-    private val gson = Gson()
+    private var gson: Gson = GsonBuilder()
+        .serializeNulls()
+        .create()
 
     override fun intercept(chain: Interceptor.Chain?): Response {
 
