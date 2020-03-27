@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -97,6 +98,8 @@ class LoginActivity : br.com.aisdigital.retrofit2.mock.example.base.BaseActivity
     }
 
     private fun requestLogin() {
+        val keyboard = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        keyboard.hideSoftInputFromWindow(binding.password.windowToken, 0)
         showLoading()
         viewModel.login(
             binding.username.text.toString(),

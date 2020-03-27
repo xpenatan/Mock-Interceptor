@@ -1,15 +1,40 @@
+#### BEGIN
+// POST
 [
     {
-        "code": 200,
-        "request": "{
-            'username': 'admin',
-            'password': '123456'
-        }",
-        "response": "{
-            'user': {
-                'id': '91239',
-                'display_name': 'This is cool'
-            }
-        }"
+        "id": "1",
+        "response_code": 200
+    },
+    {
+        "id": "2",
+        "response_code": 200,
+        "compare_all_input": false
     }
 ]
+
+#### BEGIN
+id = 1
+{
+    "username": "admin",
+    "password": "123456"
+}
+#### OUTPUT
+{
+    "user": {
+        "id": "91239",
+        "display_name": "This is cool"
+    }
+}
+
+#### BEGIN
+id = 2
+{
+    "username": "superAdmin"
+}
+#### OUTPUT
+{
+    "user": {
+        "id": "91239",
+        "display_name": "This is cool"
+    }
+}

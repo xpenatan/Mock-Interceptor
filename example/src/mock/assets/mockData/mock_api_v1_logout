@@ -1,5 +1,15 @@
+#### BEGIN
+// POST
 [
     {
-        "code": 200
+        "id": "1",
+        "response_code": 200
     }
 ]
+
+#### BEGIN
+id = 1
+#### OUTPUT
+{
+    "logout_text": "Logout Mock Success"
+}

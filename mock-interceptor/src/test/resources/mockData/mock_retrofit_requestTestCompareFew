@@ -1,0 +1,24 @@
+
+
+#### BEGIN
+// POST
+[
+    {
+        "id": "1",
+        "response_code": 200,
+        "compare_all_input": false
+    }
+]
+
+
+#### BEGIN
+id = 1
+{
+    "email": "myEmail@gmail.com",
+    "name": "Jon"
+}
+#### OUTPUT
+{
+    "message": "Compare success",
+    "code": 231
+}

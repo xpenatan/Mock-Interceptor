@@ -6,6 +6,9 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface RetrofitTestAPI {
+    @POST("retrofit/requestTestCompareFew")
+    fun requestPostCompareFew(@Body request: RequestMultiDataModel): Call<ResponseModel>
+
     @POST("retrofit/requestTest")
     fun requestPostEmailResponse(@Body request: RequestModel): Call<ResponseModel>
 

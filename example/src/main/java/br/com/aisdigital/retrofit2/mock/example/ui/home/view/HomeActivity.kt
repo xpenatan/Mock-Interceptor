@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import br.com.aisdigital.retrofit2.mock.example.R
 import br.com.aisdigital.retrofit2.mock.example.ui.home.viewmodel.HomeViewModel
 import br.com.aisdigital.retrofit2.mock.example.databinding.ActivityHomeBinding
+import br.com.aisdigital.retrofit2.mock.example.network.ApiResult
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class HomeActivity : br.com.aisdigital.retrofit2.mock.example.base.BaseActivity() {
@@ -46,8 +47,19 @@ class HomeActivity : br.com.aisdigital.retrofit2.mock.example.base.BaseActivity(
 
     private fun initObserver() {
         viewModel.logoutResult.observe(this, Observer {
-            hideLoading()
-            finish()
+            if (it is ApiResult.Success && it.data != null) {
+                it.data.logoutText?.let { logoutText ->
+                    showSnackBarMessage(binding.root, logoutText, onDismissed = {
+                        hideLoading()
+                        finish()
+                    })
+                }
+            } else {
+                showSnackBarMessage(binding.root, getString(R.string.logout_failed), onDismissed = {
+                    hideLoading()
+                    finish()
+                })
+            }
         })
     }
 

@@ -35,7 +35,7 @@ open class BaseActivity : AppCompatActivity() {
             mySnackBar.show()
             mySnackBar.addCallback(object : Snackbar.Callback() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    onDismissed?.let { listener -> listener() }
+                   onDismissed?.let { listener -> listener() }
                 }
             })
         }

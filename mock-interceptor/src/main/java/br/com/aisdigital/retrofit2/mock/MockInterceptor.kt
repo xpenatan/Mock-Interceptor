@@ -98,7 +98,7 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
             requestJSON = getRequestBodyJSON(requestBody)
         }
         mockItems?.forEach { mockData ->
-            if(checkIfJsonIsEqual(requestJSON, paramJSON, mockData.rawInput))
+            if(checkIfJsonIsEqual(requestJSON, paramJSON, mockData))
                 return mockData
         }
         return null
@@ -117,7 +117,9 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
         return buffer.readString(charset)
     }
 
-    private fun checkIfJsonIsEqual(requestJson: String, paramJson: String, mockInput: String?): Boolean {
+    private fun checkIfJsonIsEqual(requestJson: String, paramJson: String, mockData: MockData): Boolean {
+        val compareAllInput = mockData.getCompareAllInput()
+        val mockInput: String? = mockData.rawInput
         var mockElement: JsonElement? = null
         var requestJsonElement: JsonElement? = null
         var formJsonElement: JsonElement? = null
@@ -134,7 +136,10 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
 
         // Check if all its content is equal. Even if the order is different
         if(mockElement != null) {
-            requestEqual = mockElement == requestJsonElement
+
+            if(requestJsonElement != null) {
+                requestEqual = compareJsonElement(mockElement, requestJsonElement, compareAllInput)
+            }
             formEqual = mockElement == formJsonElement
         }
 
@@ -148,6 +153,37 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
             return true
         }
         return false
+    }
+
+    private fun compareJsonElement(mockElement: JsonElement, requestElement: JsonElement, compareAllInput: Boolean): Boolean {
+        var isValid = false
+        if(compareAllInput) {
+            isValid = mockElement == requestElement
+        }
+        else {
+            if(mockElement.isJsonObject && requestElement.isJsonObject) {
+                val mockObject = mockElement.asJsonObject
+                val requestObject = requestElement.asJsonObject
+                var containsAll = true
+                mockObject.keySet().forEach { key ->
+                    val mockDataElement = mockObject.get(key)
+                    val containsData = requestObject.has(key) && requestObject.get(key) == mockDataElement
+                    containsAll = containsAll && containsData
+                }
+                isValid = containsAll
+            }
+            if(mockElement.isJsonArray && requestElement.isJsonArray) {
+                val mockArray = mockElement.asJsonArray
+                val requestArray = requestElement.asJsonArray
+                var containsAll = true
+                mockArray.forEach { mockArrayData ->
+                    containsAll = containsAll && requestArray.contains(mockArrayData)
+                }
+                isValid = containsAll
+            }
+        }
+
+        return isValid
     }
 
     /**
@@ -346,33 +382,22 @@ open class MockInterceptor(private val context: Context, var makeRequestIfFail: 
 
     class MockData (
         @SerializedName("id") val id: String,
-        @SerializedName("response_code") val responseCode: Int
+        @SerializedName("response_code") val responseCode: Int,
+        @SerializedName("compare_all_input") private var compareAllInput: Boolean? = null
     ) {
         var rawInput: String? = null
         var rawOutput: String? = null
         var error: Boolean = false
+
+        fun getCompareAllInput(): Boolean {
+            if(compareAllInput == null)
+                compareAllInput = true
+            return compareAllInput!!
+        }
     }
 
     data class ParamData(
         @SerializedName("key") val key: String,
         @SerializedName("value") val value: String
     )
-
-    data class MockJSON(
-        @SerializedName("type") val type: String,
-        @SerializedName("format") val format: String,
-        @SerializedName("code") val code: Int,
-        @SerializedName("request") var request: String?,
-        @SerializedName("response") var response: String?,
-        @SerializedName("requestForm") var requestForm: String?
-    ) {
-        companion object {
-            const val TYPE_POST = "POST"
-            const val TYPE_GET = "GET"
-            const val TYPE_PUT = "PUT"
-            const val TYPE_DELETE = "DELETE"
-
-            const val FORMAT_JSON = "JSON"
-        }
-    }
 }

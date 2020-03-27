@@ -4,8 +4,8 @@ import br.com.aisdigital.retrofit2.mock.example.network.ApiResult
 import br.com.aisdigital.retrofit2.mock.example.network.api.AuthApi
 import br.com.aisdigital.retrofit2.mock.example.network.request.LoginRequest
 import br.com.aisdigital.retrofit2.mock.example.network.response.LoginResponse
+import br.com.aisdigital.retrofit2.mock.example.network.response.LogoutResponse
 import br.com.aisdigital.retrofit2.mock.example.network.util.BaseRetrofitCallback
-import okhttp3.ResponseBody
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
@@ -17,10 +17,9 @@ class LoginDataSource(private val authApi: AuthApi) {
         call.enqueue(BaseRetrofitCallback<LoginResponse>(handler))
     }
 
-    fun logout(handler: (ApiResult<ResponseBody>) -> Unit) {
+    fun logout(handler: (ApiResult<LogoutResponse>) -> Unit) {
         val call = authApi.logout()
-        call.enqueue(BaseRetrofitCallback<ResponseBody>(handler))
-        handler.invoke(ApiResult.Success())
+        call.enqueue(BaseRetrofitCallback<LogoutResponse>(handler))
     }
 }
 

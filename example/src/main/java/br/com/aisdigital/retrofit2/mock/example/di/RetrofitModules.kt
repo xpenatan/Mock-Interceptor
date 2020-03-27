@@ -22,7 +22,7 @@ val retrofitModule = module {
         )
 
         if (BuildConfig.FLAVOR == "mock")
-            initClient.addInterceptor(MockInterceptor(androidContext()))
+            initClient.addInterceptor(MockInterceptor(androidContext(), makeRequestIfFail = false))
 
         RetrofitHelper.initRetrofit(initClient)
     }
